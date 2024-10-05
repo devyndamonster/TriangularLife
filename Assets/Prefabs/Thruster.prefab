@@ -234,10 +234,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 575910df84112fe4683ef926efa2a094, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ParentRigidbody: {fileID: 0}
   ParticleSystem: {fileID: 7321057483783839331}
   DebugText: {fileID: 1430870843433586297}
-  MaxThrustForce: 1000
+  MaxThrustForce: 250
 --- !u!60 &2841868100213129973
 PolygonCollider2D:
   m_ObjectHideFlags: 0

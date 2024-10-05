@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class PlayerShip : MonoBehaviour
 {
-    private void Update()
-    {
-        Debug.DrawLine(transform.position, (transform.position + (GetForwardVector() * 10)), Color.red);
-        Debug.Log(GetForwardVector());
-    }
-
     public Vector3 GetForwardVector()
     {
         return transform.up;
