@@ -33,12 +33,16 @@ public class AttachmentGroup : MonoBehaviour
         attachablePiece.transform.SetParent(transform);
         attachablePiece.AttachmentGroup = this;
         ChildAttachmentPieces.Add(attachablePiece);
-
     }
 
     public void AttachToGroup(Clickable targetAttachmentPoint, AttachablePiece attachablePiece, Clickable otherAttachmentPoint)
     {
-        if(attachablePiece.AttachmentGroup is AttachmentGroup attachmentGroup)
+        foreach (AttachablePiece childAttachmentPiece in ChildAttachmentPieces)
+        {
+            childAttachmentPiece.OnOtherAttachedToGroup?.Invoke(attachablePiece);
+        }
+
+        if (attachablePiece.AttachmentGroup is AttachmentGroup attachmentGroup)
         {
             if(attachmentGroup.Rigidbody is Rigidbody2D otherRigidBody)
             {

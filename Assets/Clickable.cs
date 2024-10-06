@@ -5,6 +5,7 @@ using UnityEngine.EventSystems;
 
 public class Clickable : MonoBehaviour, IPointerDownHandler, IPointerUpHandler, IPointerEnterHandler, IPointerExitHandler
 {
+    [HideInInspector]
     public SpriteRenderer SpriteRenderer;
 
     public delegate void PointerAction(Clickable clickable);

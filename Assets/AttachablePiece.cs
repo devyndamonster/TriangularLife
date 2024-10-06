@@ -5,6 +5,9 @@ using UnityEngine.EventSystems;
 
 public class AttachablePiece : MonoBehaviour
 {
+    public delegate void AttachAction(AttachablePiece attachable);
+    public AttachAction OnOtherAttachedToGroup;
+
     public GameObject AttachmentContainer;
 
     [HideInInspector]
@@ -51,15 +54,27 @@ public class AttachablePiece : MonoBehaviour
 
     public void Attach(Clickable attachmentPoint, AttachablePiece otherAttachable, Clickable otherAttachmentPoint)
     {
-        if(AttachmentGroup != null)
+        if (AttachmentGroup != null)
         {
             AttachmentGroup.AttachToGroup(attachmentPoint, otherAttachable, otherAttachmentPoint);
         }
         else
         {
-            var newAttachmentGroup = new GameObject("AttachmentGroup").AddComponent<AttachmentGroup>();
-            newAttachmentGroup.InitializeFromAttachablePiece(this);
-            newAttachmentGroup.AttachToGroup(attachmentPoint, otherAttachable, otherAttachmentPoint);
+            AttachmentGroup = new GameObject("AttachmentGroup").AddComponent<AttachmentGroup>();
+            AttachmentGroup.InitializeFromAttachablePiece(this);
+            AttachmentGroup.AttachToGroup(attachmentPoint, otherAttachable, otherAttachmentPoint);
+        }
+    }
+
+    public Rigidbody2D GetParentRigidbody()
+    {
+        if (AttachmentGroup != null)
+        {
+            return AttachmentGroup.Rigidbody;
+        }
+        else
+        {
+            return GetComponent<Rigidbody2D>();
         }
     }
 }

@@ -10,17 +10,20 @@ public class Thruster : MonoBehaviour
     public TextMeshProUGUI DebugText;
     public float MaxThrustForce = 1000;
 
-    private Rigidbody2D _parentRigidbody;
-    private PlayerShip _playerShip;
+    [HideInInspector]
+    public PlayerShip PlayerShip;
+
+    private AttachablePiece _attachablePiece;
     private float _thrustAmount = 0;
 
     private void Start()
     {
-        _parentRigidbody = GetComponentInParent<Rigidbody2D>();
-        _playerShip = GetComponentInParent<PlayerShip>();
+        _attachablePiece = GetComponent<AttachablePiece>();
+        var emmision = ParticleSystem.emission;
+        emmision.rateOverTime = 0;
     }
 
-    void Update()
+    public void Thrust()
     {
         DebugText.text = "";
 
@@ -30,10 +33,11 @@ public class Thruster : MonoBehaviour
         var movementDirectionNormalized = movementDirection.normalized;
         var movementDotProduct = Vector2.Dot(movementDirectionNormalized, thrusterDirection);
 
-        var targetRotation = _playerShip.GetRotationAngleFromMouse();
-        var parentCenter = _parentRigidbody.transform.position;
-        var parentForward = _parentRigidbody.transform.up;
-        
+        var targetRotation = PlayerShip.GetRotationAngleFromMouse();
+        var parentRigidbody = PlayerShip.AttachablePiece.GetParentRigidbody();
+        var parentCenter = parentRigidbody.transform.position;
+        var parentForward = parentRigidbody.transform.up;
+
         //If the thruster is perpendicular to its position on parent, then the thruster will have a leverage effect
         var relativePosition = transform.position - parentCenter;
         var relativePositionNormalized = relativePosition.normalized;
@@ -44,20 +48,6 @@ public class Thruster : MonoBehaviour
         var thrusterRotationForce = Mathf.Clamp((targetRotation * thrusterTorque) / 100, 0, 1);
         DebugText.text += $"\nRot Thr Amount: {thrusterRotationForce}";
 
-        /*
-        var thrusterLeverageCooeficient = Vector2.Dot(relativePosition, parentForward);
-        thrusterLeverageCooeficient = Mathf.Abs(thrusterLeverageCooeficient);
-        thrusterLeverageCooeficient = Mathf.Lerp(1, 0, thrusterLeverageCooeficient);
-        */
-
-
-
-        /*
-        var thrusterRotationForce = targetRotation * thrusterLeverageCooeficient;
-        DebugText.text += $"\nRot Deg: {targetRotation}";
-        DebugText.text += $"\nRot Thr Amount: {thrusterRotationForce}";
-        */
-
         _thrustAmount = Mathf.Clamp(movementDotProduct + thrusterRotationForce, 0, 1);
 
         DebugText.text += $"\nMov Thr Amount: {_thrustAmount}";
@@ -65,11 +55,11 @@ public class Thruster : MonoBehaviour
         var emission = ParticleSystem.emission;
         emission.rateOverTime = Mathf.Lerp(0, 100, _thrustAmount);
 
-        if(_thrustAmount > 0.01f)
+        if (_thrustAmount > 0.01f)
         {
             var thrustForce = Mathf.Lerp(0, MaxThrustForce, _thrustAmount);
             var forceVector = transform.up * thrustForce * Time.deltaTime;
-            _parentRigidbody.AddForceAtPosition(forceVector, transform.position, ForceMode2D.Force);
+            parentRigidbody.AddForceAtPosition(forceVector, transform.position, ForceMode2D.Force);
         }
     }
 }
