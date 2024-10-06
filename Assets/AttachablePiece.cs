@@ -7,9 +7,10 @@ public class AttachablePiece : MonoBehaviour
 {
     public GameObject AttachmentContainer;
 
+    [HideInInspector]
+    public AttachmentGroup AttachmentGroup;
+
     private Clickable[] _attachmentPoints;
-    private Clickable _grabbedAttachmentPoint;
-    private LineRenderer _lineRenderer;
 
     void Start()
     {
@@ -26,33 +27,39 @@ public class AttachablePiece : MonoBehaviour
 
     public void OnAttachmentPointGrabbed(Clickable attachmentPoint)
     {
-        Debug.Log("Attachment point grabbed");
-        _grabbedAttachmentPoint = attachmentPoint;
-
         PlayerCamera playerCamera = Camera.main.GetComponent<PlayerCamera>();
         playerCamera.OnAttachmentPointGrabbed(this, attachmentPoint);
     }
 
     public void OnAttachmentPointReleased(Clickable attachmentPoint)
     {
-        Debug.Log("Attachment point released");
-        _grabbedAttachmentPoint = null;
-
         PlayerCamera playerCamera = Camera.main.GetComponent<PlayerCamera>();
         playerCamera.OnAttachmentPointReleased(this, attachmentPoint);
     }
 
     public void OnAttachmentPointEnter(Clickable attachmentPoint)
     {
-        Debug.Log("Attachment point entered");
         PlayerCamera playerCamera = Camera.main.GetComponent<PlayerCamera>();
         playerCamera.OnAttachmentPointEnter(this, attachmentPoint);
     }
 
     public void OnAttachmentPointExit(Clickable attachmentPoint)
     {
-        Debug.Log("Attachment point exited");
         PlayerCamera playerCamera = Camera.main.GetComponent<PlayerCamera>();
         playerCamera.OnAttachmentPointExit(this, attachmentPoint);
+    }
+
+    public void Attach(Clickable attachmentPoint, AttachablePiece otherAttachable, Clickable otherAttachmentPoint)
+    {
+        if(AttachmentGroup != null)
+        {
+            AttachmentGroup.AttachToGroup(attachmentPoint, otherAttachable, otherAttachmentPoint);
+        }
+        else
+        {
+            var newAttachmentGroup = new GameObject("AttachmentGroup").AddComponent<AttachmentGroup>();
+            newAttachmentGroup.InitializeFromAttachablePiece(this);
+            newAttachmentGroup.AttachToGroup(attachmentPoint, otherAttachable, otherAttachmentPoint);
+        }
     }
 }

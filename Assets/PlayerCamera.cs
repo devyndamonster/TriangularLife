@@ -6,6 +6,7 @@ public class PlayerCamera : MonoBehaviour
 {
     public GameObject TargetObject;
     public float Zoom = 10;
+    public float MinZoom = 5;
 
     private Clickable _grabbedAttachmentPoint;
     private AttachablePiece _grabbedAttachable;
@@ -24,6 +25,11 @@ public class PlayerCamera : MonoBehaviour
         else if (Input.mouseScrollDelta.y < 0)
         {
             Zoom -= 1;
+        }
+
+        if (Zoom < MinZoom)
+        {
+            Zoom = MinZoom;
         }
 
         Camera.main.orthographicSize = Zoom;
@@ -66,7 +72,7 @@ public class PlayerCamera : MonoBehaviour
         {
             if (_hoveredAttachable != null && _hoveredAttachmentPoint != null)
             {
-                Debug.Log("Attach!");
+                _hoveredAttachable.Attach(_hoveredAttachmentPoint, _grabbedAttachable, _grabbedAttachmentPoint);
             }
         }
 
